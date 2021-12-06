@@ -14,7 +14,7 @@ public class Hall{
 
     }
 
-    public Hall(Long id, List<Film> films, HallSeat hallSeat) {
+    public Hall(final Long id, List<Film> films, HallSeat hallSeat) {
         this.id = id;
         this.films = films;
         this.hallSeat = hallSeat;

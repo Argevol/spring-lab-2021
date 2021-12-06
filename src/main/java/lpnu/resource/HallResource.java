@@ -36,7 +36,7 @@ public class HallResource {
         return hallService.updateHall(hallDTO);
     }
 
-    @PutMapping("/halls/{id}")
+    @PutMapping("/halls-film/{id}")
     public HallDTO addFilm(@Validated @RequestBody final FilmDTO filmDTO, @PathVariable final Long id){
         return hallService.addFilm(filmDTO, id);
     }

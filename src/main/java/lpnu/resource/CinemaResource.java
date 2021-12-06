@@ -37,12 +37,12 @@ public class CinemaResource {
         return cinemaService.updateCinema(cinemaDTO);
     }
 
-    @PutMapping("/cinemas/{id}")
+    @PutMapping("/cinemas-hall/{id}")
     public CinemaDTO addHall(@Validated @RequestBody final HallDTO hallDTO, @PathVariable final Long id){
         return cinemaService.addHall(hallDTO, id);
     }
 
-    @PutMapping("/cinemas/{id}")
+    @PutMapping("/cinemas-film/{id}/{id}")
     public CinemaDTO addFilm(@Validated @RequestBody final FilmDTO filmDTO, @PathVariable final Long cinemaId, @PathVariable final Long hallId){
         return cinemaService.addFilm(filmDTO, cinemaId, hallId);
     }

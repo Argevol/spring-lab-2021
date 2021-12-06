@@ -1,11 +1,13 @@
 package lpnu.entity;
 
 import javax.validation.constraints.Min;
+import java.util.Objects;
 
 public class Ticket {
+    public static final double MARK_UP = 30;
+    public static final double STANDART_PRICE = 110;
     private Long id;
-
-    @Min(200)
+    @Min(80)
     private double price;
     @Min(1)
     private int sit;
@@ -85,5 +87,18 @@ public class Ticket {
 
     public void setFilmId(final Long filmId) {
         this.filmId = filmId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ticket ticket = (Ticket) o;
+        return Double.compare(ticket.price, price) == 0 && sit == ticket.sit && row == ticket.row && Objects.equals(cinemaId, ticket.cinemaId) && Objects.equals(hallId, ticket.hallId) && Objects.equals(filmId, ticket.filmId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(price, sit, row, cinemaId, hallId, filmId);
     }
 }

@@ -2,7 +2,9 @@ package lpnu.service.impl;
 
 import lpnu.dto.FilmDTO;
 import lpnu.entity.Film;
+import lpnu.exception.ServiceException;
 import lpnu.mapper.FilmToFilmDTOMapper;
+import lpnu.model.EnumTechnology;
 import lpnu.repository.FilmRepository;
 import lpnu.service.FilmService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +48,20 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public FilmDTO saveFilm(final FilmDTO filmDTO) {
         final Film film = filmMapper.toEntity(filmDTO);
+        double price = 0;
+
+        for(final EnumTechnology technology : EnumTechnology.values()){
+            if(technology.getName().equals(film.getTechnology())){
+                price = technology.getPrice();
+            }
+        }
+        if(price == 0){
+            throw new ServiceException(400, "enum doesn't contain " + film.getTechnology() + " technology");
+        }
+
+        film.setPriceTechnology(price);
         filmRepository.saveFilm(film);
+
         return filmMapper.toDTO(film);
     }
 }

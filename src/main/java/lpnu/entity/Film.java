@@ -1,11 +1,8 @@
 package lpnu.entity;
 
-import lpnu.model.EnumTechnology;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import java.util.Objects;
 
 public class Film {
     private Long id;
@@ -17,13 +14,15 @@ public class Film {
     @Min(0)
     @Max(18)
     private int minAge;
-    private EnumTechnology technology;
+    private double priceTechnology;
+    @NotBlank
+    private String technology;
 
     public Film(){
 
     }
 
-    public Film(final Long id, final int duration, final String name, final int minAge, final EnumTechnology technology) {
+    public Film(final Long id, final int duration, final String name, final int minAge, final String technology) {
         this.id = id;
         this.duration = duration;
         this.name = name;
@@ -63,24 +62,19 @@ public class Film {
         this.minAge = minAge;
     }
 
-    public EnumTechnology getTechnology() {
+    public double getPriceTechnology() {
+        return priceTechnology;
+    }
+
+    public void setPriceTechnology(final double priceTechnology) {
+        this.priceTechnology = priceTechnology;
+    }
+
+    public String getTechnology() {
         return technology;
     }
 
-    public void setTechnology(final EnumTechnology technology) {
+    public void setTechnology(final String technology) {
         this.technology = technology;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Film film = (Film) o;
-        return duration == film.duration && minAge == film.minAge && Objects.equals(id, film.id) && Objects.equals(name, film.name) && technology == film.technology;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, duration, name, minAge, technology);
     }
 }

@@ -37,6 +37,7 @@ public class FilmRepository {
         savedFilm.setName(film.getName());
         savedFilm.setDuration(film.getDuration());
         savedFilm.setMinAge(film.getMinAge());
+        savedFilm.setPriceTechnology(film.getPriceTechnology());
         savedFilm.setTechnology(film.getTechnology());
 
         return savedFilm;

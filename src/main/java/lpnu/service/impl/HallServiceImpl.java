@@ -6,6 +6,7 @@ import lpnu.entity.Hall;
 import lpnu.exception.ServiceException;
 import lpnu.mapper.FilmToFilmDTOMapper;
 import lpnu.mapper.HallToHallDTOMapper;
+import lpnu.repository.FilmRepository;
 import lpnu.repository.HallRepository;
 import lpnu.service.HallService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class HallServiceImpl implements HallService {
 
     @Autowired
     private HallRepository hallRepository;
+
+    @Autowired
+    private FilmRepository filmRepository;
 
     @Override
     public List<HallDTO> getAllHalls() {
@@ -52,6 +56,10 @@ public class HallServiceImpl implements HallService {
     @Override
     public HallDTO saveHall(final HallDTO hallDTO) {
         final Hall hall = hallMapper.toEntity(hallDTO);
+
+        if (hallRepository.getAllHalls().stream().map(e -> e.equals(hall)).findAny().isPresent())
+            throw new ServiceException(400, "ticket is already saved");
+
         hallRepository.saveHall(hall);
         return hallMapper.toDTO(hall);
     }

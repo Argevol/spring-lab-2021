@@ -67,7 +67,7 @@ public class CinemaServiceImpl implements CinemaService {
         final Cinema cinema = cinemaMapper.toEntity(getCinemaById(id));
 
         if (cinema.getHalls().stream().anyMatch(hallMapper.toEntity(hallDTO)::equals)) {
-            throw new ServiceException(400, "identical films");
+            throw new ServiceException(400, "identical halls");
         } else {
             cinema.getHalls().add(hallMapper.toEntity(hallDTO));
         }

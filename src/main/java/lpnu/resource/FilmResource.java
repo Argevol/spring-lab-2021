@@ -16,27 +16,27 @@ public class FilmResource {
     private FilmService filmService;
 
     @GetMapping("/films")
-    public List<FilmDTO> getAllHalls() {
+    public List<FilmDTO> getFilmHalls() {
         return filmService.getAllFilms();
     }
 
     @GetMapping("/films/{id}")
-    public FilmDTO getHallById(@PathVariable final Long id) {
+    public FilmDTO getFilmById(@PathVariable final Long id) {
         return filmService.getFilmById(id);
     }
 
     @PostMapping("/films")
-    public FilmDTO saveHall(@Validated @RequestBody final FilmDTO filmDTO) {
+    public FilmDTO saveFilm(@Validated @RequestBody final FilmDTO filmDTO) {
         return filmService.saveFilm(filmDTO);
     }
 
-    @PutMapping("/films")
-    public FilmDTO updateHall(@Validated @RequestBody final FilmDTO filmDTO) {
+    @PutMapping("/films-film")
+    public FilmDTO updateFilm(@Validated @RequestBody final FilmDTO filmDTO) {
         return filmService.updateFilm(filmDTO);
     }
 
     @DeleteMapping("/films/{id}")
-    public ResponseEntity deleteHallById(@PathVariable final Long id) {
+    public ResponseEntity deleteFilmById(@PathVariable final Long id) {
         filmService.deleteFilmById(id);
         return ResponseEntity.ok().build();
     }

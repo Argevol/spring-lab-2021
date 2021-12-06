@@ -1,12 +1,12 @@
 package lpnu.dto;
 
-import lpnu.model.EnumTechnology;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 public class FilmDTO {
+    public static final double MARK_UP = 30;
+    public static final double STANDART_PRICE = 110;
     private Long id;
     @Min(1)
     @Max(210)
@@ -16,13 +16,15 @@ public class FilmDTO {
     @Min(0)
     @Max(18)
     private int minAge;
-    private EnumTechnology technology;
+    private double priceTechnology;
+    @NotBlank
+    private String technology;
 
     public FilmDTO(){
 
     }
 
-    public FilmDTO(final Long id, final int duration, final String name, final int minAge, final EnumTechnology technology) {
+    public FilmDTO(final Long id, final int duration, final String name, final int minAge, final String technology) {
         this.id = id;
         this.duration = duration;
         this.name = name;
@@ -62,11 +64,19 @@ public class FilmDTO {
         this.minAge = minAge;
     }
 
-    public EnumTechnology getTechnology() {
+    public double getPriceTechnology() {
+        return priceTechnology;
+    }
+
+    public void setPriceTechnology(final double priceTechnology) {
+        this.priceTechnology = priceTechnology;
+    }
+
+    public String getTechnology() {
         return technology;
     }
 
-    public void setTechnology(final EnumTechnology technology) {
+    public void setTechnology(final String technology) {
         this.technology = technology;
-    }
-}
+    }}
+
