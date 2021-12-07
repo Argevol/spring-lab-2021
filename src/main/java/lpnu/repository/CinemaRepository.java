@@ -7,19 +7,14 @@ import lpnu.entity.Hall;
 import lpnu.exception.ServiceException;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class CinemaRepository {
-    private List<Cinema> cinemas;
-    private long id = 1;
+    private final List<Cinema> cinemas = new ArrayList<>();
 
-    @PostConstruct
-    public void init() {
-        cinemas = new ArrayList<>();
-    }
+    private long id = 1;
 
     public List<Cinema> getAllCinemas() {
         return new ArrayList<>(cinemas);

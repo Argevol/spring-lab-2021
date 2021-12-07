@@ -20,12 +20,7 @@ public class User {
     @Pattern(regexp="[a-zA-Z0-9]{4,20}@[a-z]{1,5}\\.[a-z]{1,3}", message="Invalid user email")
     private String email;
 
-    private List<TicketDTO> ticketDTOList;
-
-    @PostConstruct
-    public void init(){
-        ticketDTOList = new ArrayList<>();
-    }
+    private List<TicketDTO> ticketDTOList = new ArrayList<>();
 
     public User() {
     }

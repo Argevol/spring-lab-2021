@@ -4,7 +4,6 @@ import lpnu.dto.CinemaDTO;
 import lpnu.dto.FilmDTO;
 import lpnu.dto.HallDTO;
 import lpnu.service.CinemaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +13,11 @@ import java.util.List;
 @RequestMapping("/api/v1")
 @RestController
 public class CinemaResource {
-    @Autowired
-    private CinemaService cinemaService;
+    private final CinemaService cinemaService;
+
+    public CinemaResource(final CinemaService cinemaService) {
+        this.cinemaService = cinemaService;
+    }
 
     @GetMapping("/cinemas")
     public List<CinemaDTO> getAllCinemas() {
@@ -32,7 +34,7 @@ public class CinemaResource {
         return cinemaService.saveCinema(cinemaDTO);
     }
 
-    @PutMapping("/cinemas")
+    @PutMapping("/cinemas-cinema")
     public CinemaDTO updateHall(@Validated @RequestBody final CinemaDTO cinemaDTO) {
         return cinemaService.updateCinema(cinemaDTO);
     }

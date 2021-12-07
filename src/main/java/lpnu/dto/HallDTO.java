@@ -2,13 +2,15 @@ package lpnu.dto;
 
 import lpnu.entity.Film;
 import lpnu.model.HallSeat;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HallDTO {
     private Long id;
+
     private List<Film> films = new ArrayList<>();
+
     private HallSeat hallSeat;
 
     public HallDTO(){
@@ -43,5 +45,18 @@ public class HallDTO {
 
     public void setHallSeat(final HallSeat hallSeat) {
         this.hallSeat = hallSeat;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HallDTO hallDTO = (HallDTO) o;
+        return Objects.equals(films, hallDTO.films) && Objects.equals(hallSeat, hallDTO.hallSeat);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(films, hallSeat);
     }
 }

@@ -7,7 +7,6 @@ import lpnu.mapper.FilmToFilmDTOMapper;
 import lpnu.model.EnumTechnology;
 import lpnu.repository.FilmRepository;
 import lpnu.service.FilmService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,11 +14,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class FilmServiceImpl implements FilmService {
-    @Autowired
     private FilmToFilmDTOMapper filmMapper;
-
-    @Autowired
     private FilmRepository filmRepository;
+
+    public FilmServiceImpl(final FilmToFilmDTOMapper filmMapper, final FilmRepository filmRepository) {
+        this.filmMapper = filmMapper;
+        this.filmRepository = filmRepository;
+    }
 
     @Override
     public List<FilmDTO> getAllFilms() {
@@ -58,10 +59,12 @@ public class FilmServiceImpl implements FilmService {
         if(price == 0){
             throw new ServiceException(400, "enum doesn't contain " + film.getTechnology() + " technology");
         }
-
         film.setPriceTechnology(price);
-        filmRepository.saveFilm(film);
+        if (filmRepository.getAllFilms().stream().anyMatch(e -> filmMapper.toDTO(e).equals(filmDTO))){
+            throw new ServiceException(400, "film is already saved");
+        }
 
+        filmRepository.saveFilm(film);
         return filmMapper.toDTO(film);
     }
 }

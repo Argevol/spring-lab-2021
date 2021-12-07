@@ -12,8 +12,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1")
 public class TicketResource {
-    @Autowired
-    private TicketService ticketService;
+    private final TicketService ticketService;
+
+    public TicketResource(final TicketService ticketService) {
+        this.ticketService = ticketService;
+    }
 
     @GetMapping("/tickets")
     public List<TicketDTO> getAllTickets() {
@@ -25,7 +28,7 @@ public class TicketResource {
         return ticketService.getTicketById(id);
     }
 
-    @PostMapping("/halls")
+    @PostMapping("/tickets")
     public TicketDTO saveTicket(@Validated @RequestBody final TicketDTO ticketDTO) {
         return ticketService.saveTicket(ticketDTO);
     }

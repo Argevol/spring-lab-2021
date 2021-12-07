@@ -13,8 +13,11 @@ import java.util.List;
 @RequestMapping("/api/v1")
 @RestController
 public class HallResource {
-    @Autowired
-    private HallService hallService;
+    private final HallService hallService;
+
+    public HallResource(final HallService hallService) {
+        this.hallService = hallService;
+    }
 
     @GetMapping("/halls")
     public List<HallDTO> getAllHalls() {
@@ -31,7 +34,7 @@ public class HallResource {
         return hallService.saveHall(hallDTO);
     }
 
-    @PutMapping("/halls")
+    @PutMapping("/halls-hall")
     public HallDTO updateHall(@Validated @RequestBody final HallDTO hallDTO) {
         return hallService.updateHall(hallDTO);
     }

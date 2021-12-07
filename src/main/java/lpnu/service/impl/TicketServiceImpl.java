@@ -21,27 +21,26 @@ import java.util.stream.Collectors;
 
 @Service
 public class TicketServiceImpl implements TicketService {
-    @Autowired
-    private TicketToTicketDTOMapper ticketMapper;
+    private final TicketToTicketDTOMapper ticketMapper;
+    private final CinemaToCinemaDTOMapper cinemaMapper;
+    private final HallToHallDTOMapper hallMapper;
+    private final FilmToFilmDTOMapper filmMapper;
+    private final TicketRepository ticketRepository;
+    private final HallRepository hallRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private CinemaToCinemaDTOMapper cinemaMapper;
-
-    @Autowired
-    private HallToHallDTOMapper hallMapper;
-
-    @Autowired
-    private FilmToFilmDTOMapper filmMapper;
-
-    @Autowired
-    private TicketRepository ticketRepository;
-
-    @Autowired
-    private HallRepository hallRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
+    public TicketServiceImpl(final TicketToTicketDTOMapper ticketMapper, final CinemaToCinemaDTOMapper cinemaMapper,
+                             final HallToHallDTOMapper hallMapper, final FilmToFilmDTOMapper filmMapper,
+                             final TicketRepository ticketRepository, final HallRepository hallRepository,
+                             final UserRepository userRepository) {
+        this.ticketMapper = ticketMapper;
+        this.cinemaMapper = cinemaMapper;
+        this.hallMapper = hallMapper;
+        this.filmMapper = filmMapper;
+        this.ticketRepository = ticketRepository;
+        this.hallRepository = hallRepository;
+        this.userRepository = userRepository;
+    }
 
     @Override
     public List<TicketDTO> getAllTickets() {
@@ -75,18 +74,15 @@ public class TicketServiceImpl implements TicketService {
         if (ticketRepository.getAllTickets().stream().map(e -> e.equals(ticket)).findAny().isPresent())
             throw new ServiceException(400, "ticket is already saved");
 
-        double price = 0;
-        if (ticket.getRow() > hall.getHallSeat().getRows() || ticket.getSit() > hall.getHallSeat().getColumns()){
+        if (ticket.getRow() > hall.getHallSeat().getRows() || ticket.getSit() > hall.getHallSeat().getColumns()) {
             throw new ServiceException(400, "hall doesn't have such sit or/and row");
         }
 
-        if(ticket.getRow() == hall.getHallSeat().getRows()){
-           price = hall.getFilms().get(ticket.getFilmId().intValue()).getPriceTechnology() + Ticket.MARK_UP + Ticket.STANDART_PRICE;
-        }else{
-            price = hall.getFilms().get(ticket.getFilmId().intValue()).getPriceTechnology() + Ticket.STANDART_PRICE;
-        }
+        double price = ticket.getRow() == hall.getHallSeat().getRows()
+                ? hall.getFilms().get(ticket.getFilmId().intValue()).getPriceTechnology() + Ticket.MARK_UP + Ticket.STANDART_PRICE
+                : hall.getFilms().get(ticket.getFilmId().intValue()).getPriceTechnology() + Ticket.STANDART_PRICE;
 
-            ticketRepository.saveTicket(ticket);
+        ticketRepository.saveTicket(ticket);
         return ticketMapper.toDTO(ticket);
     }
 

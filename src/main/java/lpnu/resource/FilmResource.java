@@ -12,8 +12,11 @@ import java.util.List;
 @RequestMapping("/api/v1")
 @RestController
 public class FilmResource {
-    @Autowired
-    private FilmService filmService;
+    private final FilmService filmService;
+
+    public FilmResource(final FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     @GetMapping("/films")
     public List<FilmDTO> getFilmHalls() {

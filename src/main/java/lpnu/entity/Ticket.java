@@ -6,17 +6,24 @@ import java.util.Objects;
 public class Ticket {
     public static final double MARK_UP = 30;
     public static final double STANDART_PRICE = 110;
+
     private Long id;
+
     @Min(80)
     private double price;
+
     @Min(1)
     private int sit;
+
     @Min(1)
     private int row;
+
     @Min(1)
     private Long cinemaId;
+
     @Min(1)
     private Long hallId;
+
     @Min(1)
     private Long filmId;
 

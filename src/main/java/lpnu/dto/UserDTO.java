@@ -1,6 +1,5 @@
 package lpnu.dto;
 
-import javax.annotation.PostConstruct;
 import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +17,7 @@ public class UserDTO {
     @Pattern(regexp="([A-Z][a-z]+[\\s-]?)*[A-Z][a-z]+", message="Invalid user email")
     private String email;
 
-    private List<TicketDTO> ticketDTOList;
-
-    @PostConstruct
-    public void init(){
-        ticketDTOList = new ArrayList<>();
-    }
+    private List<TicketDTO> ticketDTOList = new ArrayList<>();
 
     public UserDTO() {
     }

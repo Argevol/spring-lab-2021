@@ -5,7 +5,6 @@ import lpnu.entity.User;
 import lpnu.mapper.UserToUserDTOMapper;
 import lpnu.repository.UserRepository;
 import lpnu.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,11 +12,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
-    @Autowired
-    private UserToUserDTOMapper userMapper;
+    private final UserToUserDTOMapper userMapper;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    public UserServiceImpl(final UserToUserDTOMapper userMapper, final UserRepository userRepository) {
+        this.userMapper = userMapper;
+        this.userRepository = userRepository;
+    }
 
     @Override
     public List<UserDTO> getAllUsers() {

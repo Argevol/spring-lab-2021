@@ -5,19 +5,14 @@ import lpnu.entity.Hall;
 import lpnu.exception.ServiceException;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class HallRepository {
-    private List<Hall> halls;
-    private long id = 1;
+    private List<Hall> halls = new ArrayList<>();
 
-    @PostConstruct
-    public void init() {
-        halls = new ArrayList<>();
-    }
+    private long id = 1;
 
     public List<Hall> getAllHalls() {
         return new ArrayList<>(halls);

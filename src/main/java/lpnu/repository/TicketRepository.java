@@ -7,11 +7,13 @@ import lpnu.exception.ServiceException;
 import lpnu.mapper.TicketToTicketDTOMapper;
 import lpnu.mapper.UserToUserDTOMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class TicketRepository {
     private List<Ticket> tickets;
     private long id = 1;

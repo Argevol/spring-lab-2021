@@ -3,20 +3,14 @@ package lpnu.repository;
 import lpnu.entity.User;
 import lpnu.exception.ServiceException;
 import org.springframework.stereotype.Repository;
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class UserRepository {
 
-    private List<User> users;
+    private List<User> users = new ArrayList<>();
     private long id = 1;
-
-    @PostConstruct
-    public void init() {
-        users = new ArrayList<>();
-    }
 
     public List<User> getAllUsers() {
         return new ArrayList<>(users);

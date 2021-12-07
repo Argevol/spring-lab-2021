@@ -9,7 +9,6 @@ import lpnu.mapper.HallToHallDTOMapper;
 import lpnu.repository.FilmRepository;
 import lpnu.repository.HallRepository;
 import lpnu.service.HallService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,17 +16,18 @@ import java.util.stream.Collectors;
 
 @Service
 public class HallServiceImpl implements HallService {
-    @Autowired
-    private HallToHallDTOMapper hallMapper;
+    private final HallToHallDTOMapper hallMapper;
+    private final FilmToFilmDTOMapper filmMapper;
+    private final HallRepository hallRepository;
+    private final FilmRepository filmRepository;
 
-    @Autowired
-    private FilmToFilmDTOMapper filmMapper;
-
-    @Autowired
-    private HallRepository hallRepository;
-
-    @Autowired
-    private FilmRepository filmRepository;
+    public HallServiceImpl(final HallToHallDTOMapper hallMapper, final FilmToFilmDTOMapper filmMapper,
+                           final HallRepository hallRepository, final FilmRepository filmRepository) {
+        this.hallMapper = hallMapper;
+        this.filmMapper = filmMapper;
+        this.hallRepository = hallRepository;
+        this.filmRepository = filmRepository;
+    }
 
     @Override
     public List<HallDTO> getAllHalls() {
@@ -57,22 +57,23 @@ public class HallServiceImpl implements HallService {
     public HallDTO saveHall(final HallDTO hallDTO) {
         final Hall hall = hallMapper.toEntity(hallDTO);
 
-        if (hallRepository.getAllHalls().stream().map(e -> e.equals(hall)).findAny().isPresent())
-            throw new ServiceException(400, "ticket is already saved");
+        if (hallRepository.getAllHalls().stream().map(e -> e.equals(hall)).findAny().isPresent()) {
+            throw new ServiceException(400, "hall is already saved");
+        }
 
         hallRepository.saveHall(hall);
         return hallMapper.toDTO(hall);
     }
 
     @Override
-    public HallDTO addFilm(final FilmDTO filmDTO, final Long id){
+    public HallDTO addFilm(final FilmDTO filmDTO, final Long id) {
         final Hall hall = hallMapper.toEntity(getHallById(id));
 
-        if(hall.getFilms().stream().anyMatch(filmMapper.toEntity(filmDTO)::equals)){
-            throw new ServiceException(400, "identical films");
-        }else{
-            hall.getFilms().add(filmMapper.toEntity(filmDTO));
-        }
+//        if (hallRepository.getHallById(id).getFilms(filmRepository.getFilmById(filmDTO.getId().intValue())).stream().anyMatch(filmMapper.toEntity(filmDTO)::equals)) {
+//            throw new ServiceException(400, "there is already such film");
+//        } else {
+//            hall.getFilms().add(filmMapper.toEntity(filmDTO));
+//        }
         return hallMapper.toDTO(hall);
     }
 }

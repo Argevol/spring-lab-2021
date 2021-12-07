@@ -19,12 +19,6 @@ public class ServiceExceptionDTO {
         this.message = message;
     }
 
-    public ServiceExceptionDTO(final int code, final String message, final String details) {
-        this.code = code;
-        this.message = message;
-        this.details = details;
-    }
-
     public int getCode() {
         return code;
     }
@@ -37,7 +31,7 @@ public class ServiceExceptionDTO {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(final String message) {
         this.message = message;
     }
 
@@ -45,7 +39,7 @@ public class ServiceExceptionDTO {
         return details;
     }
 
-    public void setDetails(String details) {
+    public void setDetails(final String details) {
         this.details = details;
     }
 }

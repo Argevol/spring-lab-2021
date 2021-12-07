@@ -4,19 +4,14 @@ import lpnu.entity.Film;
 import lpnu.exception.ServiceException;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class FilmRepository {
-    private List<Film> films;
-    private long id = 1;
+    private List<Film> films = new ArrayList<>();
 
-    @PostConstruct
-    public void init() {
-        films = new ArrayList<>();
-    }
+    private long id = 1;
 
     public List<Film> getAllFilms() {
         return new ArrayList<>(films);

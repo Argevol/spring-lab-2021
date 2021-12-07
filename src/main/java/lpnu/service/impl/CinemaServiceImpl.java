@@ -11,7 +11,6 @@ import lpnu.mapper.FilmToFilmDTOMapper;
 import lpnu.mapper.HallToHallDTOMapper;
 import lpnu.repository.CinemaRepository;
 import lpnu.service.CinemaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,17 +18,18 @@ import java.util.stream.Collectors;
 
 @Service
 public class CinemaServiceImpl implements CinemaService {
-    @Autowired
-    private CinemaToCinemaDTOMapper cinemaMapper;
+    private final CinemaToCinemaDTOMapper cinemaMapper;
+    private final HallToHallDTOMapper hallMapper;
+    private final FilmToFilmDTOMapper filmMapper;
+    private final CinemaRepository cinemaRepository;
 
-    @Autowired
-    private HallToHallDTOMapper hallMapper;
-
-    @Autowired
-    private FilmToFilmDTOMapper filmMapper;
-
-    @Autowired
-    private CinemaRepository cinemaRepository;
+    public CinemaServiceImpl(final CinemaToCinemaDTOMapper cinemaMapper, final HallToHallDTOMapper hallMapper,
+                             final FilmToFilmDTOMapper filmMapper, final CinemaRepository cinemaRepository) {
+        this.cinemaMapper = cinemaMapper;
+        this.hallMapper = hallMapper;
+        this.filmMapper = filmMapper;
+        this.cinemaRepository = cinemaRepository;
+    }
 
     @Override
     public List<CinemaDTO> getAllCinemas() {
@@ -58,6 +58,10 @@ public class CinemaServiceImpl implements CinemaService {
     @Override
     public CinemaDTO saveCinema(final CinemaDTO cinemaDTO) {
         final Cinema cinema = cinemaMapper.toEntity(cinemaDTO);
+
+        if (cinemaRepository.getAllCinemas().stream().map(e -> e.equals(cinema)).findAny().isPresent())
+            throw new ServiceException(400, "cinema is already saved");
+
         cinemaRepository.saveCinema(cinema);
         return cinemaMapper.toDTO(cinema);
     }
@@ -67,7 +71,7 @@ public class CinemaServiceImpl implements CinemaService {
         final Cinema cinema = cinemaMapper.toEntity(getCinemaById(id));
 
         if (cinema.getHalls().stream().anyMatch(hallMapper.toEntity(hallDTO)::equals)) {
-            throw new ServiceException(400, "identical halls");
+            throw new ServiceException(400, "there is already such hall");
         } else {
             cinema.getHalls().add(hallMapper.toEntity(hallDTO));
         }
@@ -80,7 +84,7 @@ public class CinemaServiceImpl implements CinemaService {
         final Hall hall = cinema.getHalls().get(hallId.intValue() - 1);
 
         if (hall.getFilms().stream().anyMatch(filmMapper.toEntity(filmDTO)::equals)) {
-            throw new ServiceException(400, "identical films");
+            throw new ServiceException(400, "there is already such film");
         } else {
             hall.getFilms().add(filmMapper.toEntity(filmDTO));
         }

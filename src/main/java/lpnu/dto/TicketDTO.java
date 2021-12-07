@@ -1,21 +1,29 @@
 package lpnu.dto;
 
 import javax.validation.constraints.Min;
+import java.util.Objects;
 
 public class TicketDTO {
     private static final double MARK_UP = 30;
     private static final double STANDART_PRICE = 110;
+
     private Long id;
+
     @Min(80)
     private double price;
+
     @Min(1)
     private int sit;
+
     @Min(1)
     private int row;
+
     @Min(1)
     private Long cinemaId;
+
     @Min(1)
     private Long hallId;
+
     @Min(1)
     private Long filmId;
 
@@ -86,5 +94,18 @@ public class TicketDTO {
 
     public void setFilmId(final Long filmId) {
         this.filmId = filmId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TicketDTO ticketDTO = (TicketDTO) o;
+        return Double.compare(ticketDTO.price, price) == 0 && sit == ticketDTO.sit && row == ticketDTO.row && Objects.equals(cinemaId, ticketDTO.cinemaId) && Objects.equals(hallId, ticketDTO.hallId) && Objects.equals(filmId, ticketDTO.filmId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(price, sit, row, cinemaId, hallId, filmId);
     }
 }

@@ -4,10 +4,13 @@ import lpnu.model.HallSeat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Hall{
     private Long id;
+
     private List<Film> films = new ArrayList<>();
+
     private HallSeat hallSeat;
 
     public Hall(){
@@ -46,5 +49,18 @@ public class Hall{
 
     public void addFilm(final Film film){
         films.add(film);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Hall hall = (Hall) o;
+        return Objects.equals(films, hall.films) && Objects.equals(hallSeat, hall.hallSeat);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(films, hallSeat);
     }
 }
