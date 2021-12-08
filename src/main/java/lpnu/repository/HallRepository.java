@@ -3,9 +3,7 @@ package lpnu.repository;
 import lpnu.entity.Film;
 import lpnu.entity.Hall;
 import lpnu.exception.ServiceException;
-import lpnu.mapper.FilmToFilmDTOMapper;
 import lpnu.model.EnumTechnology;
-import lpnu.service.impl.FilmServiceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

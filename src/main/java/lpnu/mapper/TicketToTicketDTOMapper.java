@@ -17,8 +17,8 @@ public class TicketToTicketDTOMapper {
     }
     public TicketDTO toDTO(final Ticket ticket){
         return new TicketDTO(
-                ticket.getPrice(),
                 ticket.getId(),
+                ticket.getPrice(),
                 ticket.getSit(),
                 ticket.getRow(),
                 ticket.getCinemaId(),

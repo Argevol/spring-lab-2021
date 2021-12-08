@@ -14,7 +14,7 @@ public class UserDTO {
     @Pattern(regexp="([A-Z][a-z]+[\\s-]?)*[A-Z][a-z]+", message="Invalid user surname")
     private String surname;
 
-    @Pattern(regexp="([A-Z][a-z]+[\\s-]?)*[A-Z][a-z]+", message="Invalid user email")
+    @Pattern(regexp="[a-zA-Z0-9]{4,20}@[a-z]{1,5}\\.[a-z]{1,3}", message="Invalid user email")
     private String email;
 
     private List<TicketDTO> ticketDTOList = new ArrayList<>();
