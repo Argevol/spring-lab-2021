@@ -1,18 +1,18 @@
 package lpnu.model;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Matrix<T> {
-    @Min(5)
-    @Max(12)
     private int rows;
-    @Min(5)
-    @Max(14)
     private int columns;
+
+    @JsonIgnore
     private List<List<T>> data;
+
+    @JsonIgnore
     private T value;
 
     public Matrix(){

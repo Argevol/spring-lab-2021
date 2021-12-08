@@ -31,7 +31,9 @@ public class TicketDTO {
 
     }
 
-    public TicketDTO(final Long id, final int sit, final int row, final Long cinemaId, final Long hallId, final Long filmId) {
+    public TicketDTO(final double price, final Long id, final int sit, final int row,
+                     final Long cinemaId, final Long hallId, final Long filmId) {
+        this.price = price;
         this.id = id;
         this.sit = sit;
         this.row = row;

@@ -4,6 +4,7 @@ import lpnu.dto.CinemaDTO;
 import lpnu.dto.FilmDTO;
 import lpnu.dto.HallDTO;
 import lpnu.entity.Cinema;
+import lpnu.entity.Film;
 import lpnu.entity.Hall;
 import lpnu.exception.ServiceException;
 import lpnu.mapper.CinemaToCinemaDTOMapper;
@@ -45,22 +46,31 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Override
     public void deleteCinemaById(final Long id) {
-        cinemaRepository.getCinemaById(id);
         cinemaRepository.deleteCinemaById(id);
     }
 
     @Override
     public CinemaDTO updateCinema(final CinemaDTO cinemaDTO) {
-        cinemaRepository.getCinemaById(cinemaDTO.getId());
-        return cinemaMapper.toDTO(cinemaRepository.updateCinema(cinemaMapper.toEntity(cinemaDTO)));
+        if (cinemaDTO.getId() == null) {
+            throw new ServiceException(400, "id is null");
+        }
+
+        final Cinema cinema = cinemaRepository.updateAllHallsInCinema(cinemaMapper.toEntity(cinemaDTO));
+        return cinemaMapper.toDTO(cinemaRepository.updateCinema(cinema));
     }
 
     @Override
     public CinemaDTO saveCinema(final CinemaDTO cinemaDTO) {
-        final Cinema cinema = cinemaMapper.toEntity(cinemaDTO);
+        if(cinemaDTO.getId() != null){
+            throw new ServiceException(400, "id not null");
+        }
 
-        if (cinemaRepository.getAllCinemas().stream().map(e -> e.equals(cinema)).findAny().isPresent())
+        Cinema cinema = cinemaMapper.toEntity(cinemaDTO);
+        cinema = cinemaRepository.updateAllHallsInCinema(cinema);
+
+        if (cinemaRepository.getAllCinemas().stream().anyMatch(cinemaMapper.toEntity(cinemaDTO)::equals)){
             throw new ServiceException(400, "cinema is already saved");
+        }
 
         cinemaRepository.saveCinema(cinema);
         return cinemaMapper.toDTO(cinema);
@@ -68,28 +78,19 @@ public class CinemaServiceImpl implements CinemaService {
 
     @Override
     public CinemaDTO addHall(final HallDTO hallDTO, final Long id) {
-        final Cinema cinema = cinemaMapper.toEntity(getCinemaById(id));
+        final Hall hall = cinemaRepository.updateAllFilmsInHall(hallMapper.toEntity(hallDTO));
+        final Cinema cinema = cinemaRepository.addHall(hallMapper.toEntity(hallDTO), id);
 
-        if (cinema.getHalls().stream().anyMatch(hallMapper.toEntity(hallDTO)::equals)) {
-            throw new ServiceException(400, "there is already such hall");
-        } else {
-            cinema.getHalls().add(hallMapper.toEntity(hallDTO));
-        }
+        cinemaRepository.saveCinema(cinema);
         return cinemaMapper.toDTO(cinema);
     }
 
     @Override
     public CinemaDTO addFilm(final FilmDTO filmDTO, final Long cinemaId, final Long hallId) {
-        final Cinema cinema = cinemaMapper.toEntity(getCinemaById(cinemaId));
-        final Hall hall = cinema.getHalls().get(hallId.intValue() - 1);
+        final Film film = cinemaRepository.calculateAndUpdatePrice(filmMapper.toEntity(filmDTO));
+        final Cinema cinema = cinemaRepository.addFilm(filmMapper.toEntity(filmDTO), cinemaId, hallId);
 
-        if (hall.getFilms().stream().anyMatch(filmMapper.toEntity(filmDTO)::equals)) {
-            throw new ServiceException(400, "there is already such film");
-        } else {
-            hall.getFilms().add(filmMapper.toEntity(filmDTO));
-        }
-
-        cinema.addHall(hall);
+        cinemaRepository.saveCinema(cinema);
         return cinemaMapper.toDTO(cinema);
     }
 }

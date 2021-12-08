@@ -8,9 +8,7 @@ import java.util.Objects;
 
 public class Hall{
     private Long id;
-
     private List<Film> films = new ArrayList<>();
-
     private HallSeat hallSeat;
 
     public Hall(){

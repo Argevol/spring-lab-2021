@@ -8,8 +8,7 @@ import java.util.List;
 
 @Repository
 public class UserRepository {
-
-    private List<User> users = new ArrayList<>();
+    private final List<User> users = new ArrayList<>();
     private long id = 1;
 
     public List<User> getAllUsers() {
@@ -36,17 +35,16 @@ public class UserRepository {
         return savedUser;
     }
 
-    public User saveUser(final User user) {
+    public void saveUser(final User user) {
         user.setId(id);
         ++id;
         users.add(user);
-        return user;
     }
 
     public User getUserById(final Long id) {
         return users.stream()
                 .filter(e -> e.getId().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new ServiceException(400, "user with id '"+id+"' not found"));
+                .orElseThrow(() -> new ServiceException(400, "user with id " + id + " not found"));
     }
 }

@@ -5,31 +5,25 @@ import lpnu.entity.Ticket;
 import lpnu.entity.User;
 import lpnu.exception.ServiceException;
 import lpnu.mapper.TicketToTicketDTOMapper;
-import lpnu.mapper.UserToUserDTOMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class TicketRepository {
-    private List<Ticket> tickets;
+    private final List<Ticket> tickets = new ArrayList<>();
     private long id = 1;
 
-    @Autowired
-    private UserToUserDTOMapper userMapper;
+    private final UserRepository userRepository;
+    private final HallRepository hallRepository;
+    private final TicketToTicketDTOMapper ticketMapper;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private TicketToTicketDTOMapper ticketMapper;
-
-    @PostConstruct
-    public void init() {
-        tickets = new ArrayList<>();
+    public TicketRepository(final UserRepository userRepository, final TicketToTicketDTOMapper ticketMapper,
+                            final HallRepository hallRepository) {
+        this.userRepository = userRepository;
+        this.hallRepository = hallRepository;
+        this.ticketMapper = ticketMapper;
     }
 
     public List<Ticket> getAllTickets() {
@@ -59,25 +53,37 @@ public class TicketRepository {
         return savedTicket;
     }
 
-    public Ticket saveTicket(final Ticket ticket) {
+    public void saveTicket(final Ticket ticket) {
         ticket.setId(id);
         ++id;
         tickets.add(ticket);
-        return ticket;
     }
 
     public Ticket getTicketById(final Long id) {
         return tickets.stream()
                 .filter(e -> e.getId().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new ServiceException(400, "ticket with id '" + id + "' not found"));
+                .orElseThrow(() -> new ServiceException(400, "ticket with id " + id + " not found"));
     }
 
     public void removeTicketFromUserByTicketId(final Long id) {
         TicketDTO ticketDTO = ticketMapper.toDTO(getTicketById(id));
         for (User user : userRepository.getAllUsers()) {
-            if (user.getTicketDTOList().contains(ticketDTO))
                 user.getTicketDTOList().remove(ticketDTO);
         }
+    }
+
+    public Ticket calculateAndUpdatePrice(final Ticket ticket){
+        if (ticket.getRow() > hallRepository.getHallById(ticket.getHallId()).getHallSeat().getRows()
+                || ticket.getSit() > hallRepository.getHallById(ticket.getHallId()).getHallSeat().getColumns()) {
+            throw new ServiceException(400, "hall doesn't have such sit or/and row");
+        }
+
+        double price = ticket.getRow() == hallRepository.getHallById(ticket.getHallId()).getHallSeat().getRows()
+                ? hallRepository.getHallById(ticket.getHallId()).getFilms().get(ticket.getFilmId().intValue()).getPriceTechnology() + Ticket.MARK_UP + Ticket.STANDART_PRICE
+                : hallRepository.getHallById(ticket.getHallId()).getFilms().get(ticket.getFilmId().intValue()).getPriceTechnology() + Ticket.STANDART_PRICE;
+
+        ticket.setPrice(price);
+        return ticket;
     }
 }

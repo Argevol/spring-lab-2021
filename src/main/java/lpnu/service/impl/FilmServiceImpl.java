@@ -4,7 +4,6 @@ import lpnu.dto.FilmDTO;
 import lpnu.entity.Film;
 import lpnu.exception.ServiceException;
 import lpnu.mapper.FilmToFilmDTOMapper;
-import lpnu.model.EnumTechnology;
 import lpnu.repository.FilmRepository;
 import lpnu.service.FilmService;
 import org.springframework.stereotype.Service;
@@ -14,8 +13,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class FilmServiceImpl implements FilmService {
-    private FilmToFilmDTOMapper filmMapper;
-    private FilmRepository filmRepository;
+    private final FilmToFilmDTOMapper filmMapper;
+    private final FilmRepository filmRepository;
 
     public FilmServiceImpl(final FilmToFilmDTOMapper filmMapper, final FilmRepository filmRepository) {
         this.filmMapper = filmMapper;
@@ -36,31 +35,27 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public void deleteFilmById(final Long id) {
-        filmRepository.getFilmById(id);
         filmRepository.deleteFilmById(id);
     }
 
     @Override
     public FilmDTO updateFilm(final FilmDTO filmDTO) {
-        filmRepository.getFilmById(filmDTO.getId());
-        return filmMapper.toDTO(filmRepository.updateFilm(filmMapper.toEntity(filmDTO)));
+        if (filmDTO.getId() == null) {
+            throw new ServiceException(400, "id is null");
+        }
+
+        final Film film = filmRepository.calculateAndUpdatePrice(filmMapper.toEntity(filmDTO));
+        return filmMapper.toDTO(filmRepository.updateFilm(film));
     }
 
     @Override
     public FilmDTO saveFilm(final FilmDTO filmDTO) {
-        final Film film = filmMapper.toEntity(filmDTO);
-        double price = 0;
+        if (filmDTO.getId() != null) {
+            throw new ServiceException(400, "id not null");
+        }
 
-        for(final EnumTechnology technology : EnumTechnology.values()){
-            if(technology.getName().equals(film.getTechnology())){
-                price = technology.getPrice();
-            }
-        }
-        if(price == 0){
-            throw new ServiceException(400, "enum doesn't contain " + film.getTechnology() + " technology");
-        }
-        film.setPriceTechnology(price);
-        if (filmRepository.getAllFilms().stream().anyMatch(e -> filmMapper.toDTO(e).equals(filmDTO))){
+        final Film film = filmRepository.calculateAndUpdatePrice(filmMapper.toEntity(filmDTO));
+        if (filmRepository.getAllFilms().stream().anyMatch(filmMapper.toEntity(filmDTO)::equals)) {
             throw new ServiceException(400, "film is already saved");
         }
 

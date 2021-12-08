@@ -3,6 +3,9 @@ package lpnu.repository;
 import lpnu.entity.Film;
 import lpnu.entity.Hall;
 import lpnu.exception.ServiceException;
+import lpnu.mapper.FilmToFilmDTOMapper;
+import lpnu.model.EnumTechnology;
+import lpnu.service.impl.FilmServiceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -10,8 +13,7 @@ import java.util.List;
 
 @Repository
 public class HallRepository {
-    private List<Hall> halls = new ArrayList<>();
-
+    private final List<Hall> halls = new ArrayList<>();
     private long id = 1;
 
     public List<Hall> getAllHalls() {
@@ -36,28 +38,50 @@ public class HallRepository {
         return savedHall;
     }
 
-    public Hall saveHall(final Hall hall) {
+    public void saveHall(final Hall hall) {
         hall.setId(id);
         ++id;
         halls.add(hall);
-        return hall;
     }
 
     public Hall getHallById(final Long id) {
         return halls.stream()
                 .filter(e -> e.getId().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new ServiceException(400, "hall with id '" + id + "' not found"));
+                .orElseThrow(() -> new ServiceException(400, "hall with id " + id + " not found"));
     }
 
-    public Hall addFilm(final Film newFilm, final Long id){
-        final Hall savedHall = getHallById(id);
+    public Hall addFilm(final Film film, final Long id) {
+        final Hall hall = getHallById(id);
 
-        if(savedHall.getFilms().stream().anyMatch(newFilm::equals)){
-            throw new ServiceException(400, "identical films");
-        }else{
-            savedHall.getFilms().add(newFilm);
+        if (hall.getFilms().stream().anyMatch(film::equals)) {
+            throw new ServiceException(400, "there is already such film");
+        } else {
+            hall.getFilms().add(film);
         }
-        return savedHall;
+        return hall;
+    }
+
+    public Hall updateAllFilmsInHall(final Hall hall){
+        hall.setFilms(hall.getFilms().stream()
+                .map(this::calculateAndUpdatePrice)
+                .toList());
+        return hall;
+    }
+
+    public Film calculateAndUpdatePrice(final Film film){
+        double price = -1;
+        for(final EnumTechnology technology : EnumTechnology.values()){
+            if(technology.getName().equals(film.getTechnology())){
+                price = technology.getPrice();
+            }
+        }
+
+        if(price == -1){
+            throw new ServiceException(400, "enum doesn't contain " + film.getTechnology() + " technology");
+        }
+
+        film.setPriceTechnology(price);
+        return film;
     }
 }

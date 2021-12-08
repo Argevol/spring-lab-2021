@@ -14,12 +14,24 @@ public class FilmToFilmDTOMapper {
                 filmDTO.getMinAge(),
                 filmDTO.getTechnology());
     }
+
+    public Film toFullEntity(final FilmDTO filmDTO){
+        return new Film(
+                filmDTO.getId(),
+                filmDTO.getDuration(),
+                filmDTO.getName(),
+                filmDTO.getMinAge(),
+                filmDTO.getPriceTechnology(),
+                filmDTO.getTechnology());
+    }
+
     public FilmDTO toDTO(final Film film){
         return new FilmDTO(
                 film.getId(),
                 film.getDuration(),
                 film.getName(),
                 film.getMinAge(),
+                film.getPriceTechnology(),
                 film.getTechnology());
     }
 }

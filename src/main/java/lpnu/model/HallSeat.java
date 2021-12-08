@@ -5,7 +5,7 @@ public class HallSeat extends Matrix<Boolean>{
 
     }
 
-    public HallSeat(int rows, int columns) {
+    public HallSeat(final int rows, final int columns) {
         super(rows, columns, true);
     }
 }

@@ -31,11 +31,12 @@ public class FilmDTO {
 
     }
 
-    public FilmDTO(final Long id, final int duration, final String name, final int minAge, final String technology) {
+    public FilmDTO(final Long id, final int duration, final String name, final int minAge,final double priceTechnology, final String technology) {
         this.id = id;
         this.duration = duration;
         this.name = name;
         this.minAge = minAge;
+        this.priceTechnology= priceTechnology;
         this.technology = technology;
     }
 

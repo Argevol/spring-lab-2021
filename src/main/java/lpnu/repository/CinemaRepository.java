@@ -1,10 +1,10 @@
 package lpnu.repository;
 
-
 import lpnu.entity.Cinema;
 import lpnu.entity.Film;
 import lpnu.entity.Hall;
 import lpnu.exception.ServiceException;
+import lpnu.model.EnumTechnology;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -13,7 +13,6 @@ import java.util.List;
 @Repository
 public class CinemaRepository {
     private final List<Cinema> cinemas = new ArrayList<>();
-
     private long id = 1;
 
     public List<Cinema> getAllCinemas() {
@@ -38,11 +37,10 @@ public class CinemaRepository {
         return savedCinema;
     }
 
-    public Cinema saveCinema(final Cinema cinema) {
+    public void saveCinema(final Cinema cinema) {
         cinema.setId(id);
         ++id;
         cinemas.add(cinema);
-        return cinema;
     }
 
     public Cinema getCinemaById(final Long id) {
@@ -52,28 +50,55 @@ public class CinemaRepository {
                 .orElseThrow(() -> new ServiceException(400, "film with id '" + id + "' not found"));
     }
 
-    public Cinema addHall(final Hall newHall, final Long id) {
-        final Cinema savedCinema = getCinemaById(id);
+    public Cinema addHall(final Hall hall, final Long id) {
+        final Cinema cinema = getCinemaById(id);
 
-        if (savedCinema.getHalls().stream().anyMatch(newHall::equals)) {
-            throw new ServiceException(400, "identical films");
+        if (cinema.getHalls().stream().anyMatch(hall::equals)) {
+            throw new ServiceException(400, "there is already such hall");
         } else {
-            savedCinema.getHalls().add(newHall);
+            cinema.getHalls().add(hall);
         }
-        return savedCinema;
+        return cinema;
     }
 
-    public Cinema addFilm(final Film newFilm, final Long cinemaId, final Long hallId) {
-        final Cinema savedCinema = getCinemaById(cinemaId);
-        final Hall savedHall = savedCinema.getHalls().get(hallId.intValue() - 1);
+    public Cinema addFilm(final Film film, final Long cinemaId, final Long hallId) {
+        final Cinema cinema = getCinemaById(cinemaId);
 
-        if (savedHall.getFilms().stream().anyMatch(newFilm::equals)) {
-            throw new ServiceException(400, "identical films");
+        if (cinema.getHalls().get(hallId.intValue() - 1).getFilms().stream().anyMatch(film::equals)) {
+            throw new ServiceException(400, "there is already such film");
         } else {
-            savedHall.getFilms().add(newFilm);
+            cinema.getHalls().get(hallId.intValue() - 1).getFilms().add(film);
         }
 
-        savedCinema.addHall(savedHall);
-        return savedCinema;
+        return cinema;
+    }
+
+    public Cinema updateAllHallsInCinema(final Cinema cinema){
+        cinema.setHalls(cinema.getHalls().stream()
+                .map(this::updateAllFilmsInHall).toList());
+        return cinema;
+    }
+
+    public Hall updateAllFilmsInHall(final Hall hall){
+        hall.setFilms(hall.getFilms().stream()
+                .map(this::calculateAndUpdatePrice)
+                .toList());
+        return hall;
+    }
+
+    public Film calculateAndUpdatePrice(final Film film){
+        double price = -1;
+        for(final EnumTechnology technology : EnumTechnology.values()){
+            if(technology.getName().equals(film.getTechnology())){
+                price = technology.getPrice();
+            }
+        }
+
+        if(price == -1){
+            throw new ServiceException(400, "enum doesn't contain " + film.getTechnology() + " technology");
+        }
+
+        film.setPriceTechnology(price);
+        return film;
     }
 }

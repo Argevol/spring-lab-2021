@@ -2,7 +2,6 @@ package lpnu.entity;
 
 import lpnu.dto.TicketDTO;
 
-import javax.annotation.PostConstruct;
 import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;

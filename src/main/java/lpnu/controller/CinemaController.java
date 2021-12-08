@@ -1,4 +1,4 @@
-package lpnu.resource;
+package lpnu.controller;
 
 import lpnu.dto.CinemaDTO;
 import lpnu.dto.FilmDTO;
@@ -12,10 +12,10 @@ import java.util.List;
 
 @RequestMapping("/api/v1")
 @RestController
-public class CinemaResource {
+public class CinemaController {
     private final CinemaService cinemaService;
 
-    public CinemaResource(final CinemaService cinemaService) {
+    public CinemaController(final CinemaService cinemaService) {
         this.cinemaService = cinemaService;
     }
 
@@ -34,7 +34,7 @@ public class CinemaResource {
         return cinemaService.saveCinema(cinemaDTO);
     }
 
-    @PutMapping("/cinemas-cinema")
+    @PutMapping("/cinemas")
     public CinemaDTO updateHall(@Validated @RequestBody final CinemaDTO cinemaDTO) {
         return cinemaService.updateCinema(cinemaDTO);
     }

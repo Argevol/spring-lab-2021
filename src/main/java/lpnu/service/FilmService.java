@@ -1,7 +1,6 @@
 package lpnu.service;
 
 import lpnu.dto.FilmDTO;
-import lpnu.entity.Film;
 
 import java.util.List;
 

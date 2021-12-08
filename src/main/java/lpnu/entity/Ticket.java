@@ -1,6 +1,7 @@
 package lpnu.entity;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 public class Ticket {
@@ -9,7 +10,6 @@ public class Ticket {
 
     private Long id;
 
-    @Min(80)
     private double price;
 
     @Min(1)
@@ -18,12 +18,15 @@ public class Ticket {
     @Min(1)
     private int row;
 
+    @NotNull
     @Min(1)
     private Long cinemaId;
 
+    @NotNull
     @Min(1)
     private Long hallId;
 
+    @NotNull
     @Min(1)
     private Long filmId;
 

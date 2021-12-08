@@ -2,6 +2,7 @@ package lpnu.service.impl;
 
 import lpnu.dto.UserDTO;
 import lpnu.entity.User;
+import lpnu.exception.ServiceException;
 import lpnu.mapper.UserToUserDTOMapper;
 import lpnu.repository.UserRepository;
 import lpnu.service.UserService;
@@ -34,19 +35,29 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUserById(final Long id) {
-        userRepository.getUserById(id);
         userRepository.deleteUserById(id);
     }
 
     @Override
     public UserDTO updateUser(final UserDTO userDTO) {
-        userRepository.getUserById(userDTO.getId());
+        if (userDTO.getId() == null) {
+            throw new ServiceException(400, "id is null");
+        }
+
         return userMapper.toDTO(userRepository.updateUser(userMapper.toEntity(userDTO)));
     }
 
     @Override
     public UserDTO saveUser(final UserDTO userDTO) {
+        if (userDTO.getId() != null) {
+            throw new ServiceException(400, "id not null");
+        }
+
         final User user = userMapper.toEntity(userDTO);
+        if (userRepository.getAllUsers().stream().anyMatch(userMapper.toEntity(userDTO)::equals)) {
+            throw new ServiceException(400, "user is already saved");
+        }
+
         userRepository.saveUser(user);
         return userMapper.toDTO(user);
     }
